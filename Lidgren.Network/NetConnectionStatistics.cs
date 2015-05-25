@@ -18,7 +18,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Uncomment the line below to get statistics in RELEASE builds
-//#define USE_RELEASE_STATISTICS
+#define USE_RELEASE_STATISTICS
 
 using System;
 using System.Collections.Generic;
@@ -119,13 +119,14 @@ namespace Lidgren.Network
 #endif
 
 #if USE_RELEASE_STATISTICS
-		internal void PacketReceived(int numBytes, int numMessages)
-		{
+		internal void PacketReceived(int numBytes, int numMessages, int numFragments)
+        {
 			NetException.Assert(numBytes > 0 && numMessages > 0);
 			m_receivedPackets++;
 			m_receivedBytes += numBytes;
 			m_receivedMessages += numMessages;
-		}
+            m_receivedFragments += numFragments;
+        }
 #else
 		[Conditional("DEBUG")]
 		internal void PacketReceived(int numBytes, int numMessages, int numFragments)
