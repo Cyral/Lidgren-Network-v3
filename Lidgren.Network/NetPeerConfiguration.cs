@@ -67,6 +67,8 @@ namespace Lidgren.Network
 		internal float m_resendHandshakeInterval;
 		internal int m_maximumHandshakeAttempts;
 
+	    internal int m_maxTimeoutMisses;
+
 		// bad network simulation
 		internal float m_loss;
 		internal float m_duplicates;
@@ -125,6 +127,8 @@ namespace Lidgren.Network
 			m_minimumOneWayLatency = 0.0f;
 			m_randomOneWayLatency = 0.0f;
 			m_duplicates = 0.0f;
+
+		    m_maxTimeoutMisses = 1;
 
 			m_isLocked = false;
 		}
@@ -199,6 +203,15 @@ namespace Lidgren.Network
 				m_networkThreadName = value;
 			}
 		}
+
+        /// <summary>
+        /// The number of times the client or server can exceed the timeout period before disconnecting.
+        /// </summary>
+	    public int MaxTimeoutMisses
+	    {
+	        get { return m_maxTimeoutMisses; }
+	        set { m_maxTimeoutMisses = value; }
+	    }
 
 		/// <summary>
 		/// Gets or sets the maximum amount of connections this peer can hold. Cannot be changed once NetPeer is initialized.

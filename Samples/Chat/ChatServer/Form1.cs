@@ -31,5 +31,19 @@ namespace ChatServer
 		{
 			Program.DisplaySettings();
 		}
-	}
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Program.paused = !Program.paused;
+            if (button3.Text == "Pause")
+            {
+               Environment.Exit(0);
+                button3.Text = "Unpause";
+            }
+            else
+            { 
+                button3.Text = "Pause";
+            }
+        }
+    }
 }

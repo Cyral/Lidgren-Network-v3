@@ -13,6 +13,7 @@ namespace ChatServer
 	{
 		private static Form1 s_form;
 		private static NetServer s_server;
+	    public static bool paused;
 		private static NetPeerSettingsWindow s_settingsWindow;
 		
 		[STAThread]
@@ -42,6 +43,7 @@ namespace ChatServer
 			while (NativeMethods.AppStillIdle)
 			{
 				NetIncomingMessage im;
+                if (!paused)
 				while ((im = s_server.ReadMessage()) != null)
 				{
 					// handle incoming message
@@ -130,5 +132,10 @@ namespace ChatServer
 				s_settingsWindow.Show();
 			}
 		}
+
+	    public static void Kill()
+	    {
+	        s_server = null;
+	    }
 	}
 }

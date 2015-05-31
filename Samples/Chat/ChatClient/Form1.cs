@@ -53,7 +53,8 @@ namespace ChatClient
 			}
 			else
 			{
-				Program.Shutdown();
+			    Close();
+			    Environment.Exit(0);
 				button2.Text = "Connect";
 			}
 		}

@@ -31,6 +31,7 @@ namespace Lidgren.Network
 		internal NetQueue<NetTuple<NetMessageType, int>> m_queuedIncomingAcks;
 		private int m_sendBufferWritePtr;
 		private int m_sendBufferNumMessages;
+	    private int m_timeoutMisses;
 		private object m_tag;
 		internal NetConnectionStatistics m_statistics;
 
@@ -154,12 +155,22 @@ namespace Lidgren.Network
 			{
 				if (now > m_timeoutDeadline)
 				{
-					//
-					// connection timed out
-					//
-					m_peer.LogVerbose("Connection timed out at " + now + " deadline was " + m_timeoutDeadline);
-					ExecuteDisconnect("Connection timed out", true);
-					return;
+                    //
+                    // connection timed out
+                    //
+				    if (m_timeoutMisses >= m_peerConfiguration.m_maxTimeoutMisses)
+				    {
+				        m_peer.LogVerbose("Connection timed out at " + now + " deadline was " + m_timeoutDeadline);
+                        m_timeoutMisses = 0;
+                        ExecuteDisconnect("Connection timed out", true);
+                        return;
+                    }
+				    else
+				    {
+				        m_timeoutDeadline += (int)Math.Round(m_peerConfiguration.m_connectionTimeout / 2d);
+                        m_peer.LogVerbose("Connection missed " + m_timeoutMisses + " timeout(s). Deadline was " + m_timeoutDeadline);
+                        m_timeoutMisses++;
+                    }
 				}
 
 				// send ping?
@@ -456,7 +467,8 @@ namespace Lidgren.Network
 					NetIncomingMessage pmsg = m_peer.SetupReadHelperMessage(ptr, payloadLength);
 					int pongNr = pmsg.ReadByte();
 					float remoteSendTime = pmsg.ReadSingle();
-					ReceivedPong(now, pongNr, remoteSendTime);
+                    m_timeoutMisses = 0; //Reset number of tries
+                    ReceivedPong(now, pongNr, remoteSendTime);
 					break;
 				case NetMessageType.ExpandMTURequest:
 					SendMTUSuccess(payloadLength);
