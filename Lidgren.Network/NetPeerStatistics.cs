@@ -19,7 +19,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Uncomment the line below to get statistics in RELEASE builds
-#define USE_RELEASE_STATISTICS
+//#define USE_RELEASE_STATISTICS
 
 using System;
 using System.Text;
@@ -107,33 +107,19 @@ namespace Lidgren.Network
 		/// </summary>
 		public int BytesInRecyclePool { get { return m_peer.m_storagePoolBytes; } }
 
-#if USE_RELEASE_STATISTICS
-		internal void PacketSent(int numBytes, int numMessages)
-		{
-			m_sentPackets++;
-			m_sentBytes += numBytes;
-			m_sentMessages += numMessages;
-		}
-#else
+#if !USE_RELEASE_STATISTICS
 		[Conditional("DEBUG")]
-		internal void PacketSent(int numBytes, int numMessages)
-		{
-			m_sentPackets++;
-			m_sentBytes += numBytes;
-			m_sentMessages += numMessages;
-		}
 #endif
+		internal void PacketSent(int numBytes, int numMessages)
+		{
+			m_sentPackets++;
+			m_sentBytes += numBytes;
+			m_sentMessages += numMessages;
+		}
 
-#if USE_RELEASE_STATISTICS
-		internal void PacketReceived(int numBytes, int numMessages, int numFragments)
-        {
-			m_receivedPackets++;
-			m_receivedBytes += numBytes;
-			m_receivedMessages += numMessages;
-            m_receivedFragments += numFragments;
-        }
-#else
+#if !USE_RELEASE_STATISTICS
 		[Conditional("DEBUG")]
+#endif
 		internal void PacketReceived(int numBytes, int numMessages, int numFragments)
 		{
 			m_receivedPackets++;
@@ -141,7 +127,6 @@ namespace Lidgren.Network
 			m_receivedMessages += numMessages;
 			m_receivedFragments += numFragments;
 		}
-#endif
 
 		/// <summary>
 		/// Returns a string that represents this object
